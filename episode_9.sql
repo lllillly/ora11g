@@ -129,4 +129,76 @@ SELECT
   FROM  STUDENT
  GROUP  BY  CUBE(DEPT_ID, YEAR)
  ORDER  BY DEPT_ID;
+ 
+ 
+ 
+SELECT
+        CASE 
+            GROUPING_ID(DEPT_ID, YEAR)
+                WHEN 0 THEN DEPT_ID
+                WHEN 1 THEN NULL
+                WHEN 2 THEN ' 학년계'
+                WHEN 3 THEN NULL
+        END "학과",
+        CASE 
+            GROUPING_ID(DEPT_ID, YEAR)
+                WHEN 0 THEN Year
+                WHEN 1 THEN ' 소계'
+                WHEN 2 THEN YEAR
+                WHEN 3 THEN ' 전체합계'
+        END "학년",
+        COUNT(*) "인원",
+        GROUPING_ID(DEPT_ID, YEAR) "비트백터"
+  FROM  STUDENT
+ GROUP  BY CUBE(DEPT_ID, YEAR)
+ ORDER  BY DEPT_ID;
+ 
+ 
+ 
+  
+ 
+ 
+
+/*
+    ★분석함수 (window함수)
+    데이터를 분석하기 위한 함수이며, 쿼리 결과를 대상으로 전체그룹이 아닌 소그룹별로 각 행에 대한 계산 값을 반환할 수 있다.
+    분석함수는 집계함수와 달리 분석함수용 그룹을 정의하여 계산을 수행한다.
+    
+    ▶ COUNT(*), COUNT(칼럼명)      : 전체 또는 칼럼의 행위 수 반환
+    ▶ MAX(칼럼명)                  : 칼럼의 최댓값을 반환
+    ▶ MIN(칼럼명)                  : 칼럼의 최솟값을 반환
+    ▶ SUM(칼럼명)                  : 칼럼의 합계를 반환
+    ▶ AVG(칼럼명)                  : 칼럼의 평균을 반환
+    ▶ STDDEV(칼럼명)               : 칼럼의 표본표준편차를 반환
+    ▶ VARIANCE(칼럼명)             : 칼럼의 분산을 반환
+    ▶ RANK()                       : 각 그룹에서 값의 순위를 계산
+    ▶ DENSE_RANK()                 : 칼럼이나 표현식에 대하여 순위 계산, 1씩 증가
+    ▶ COME_DIST()                  : 값의 그룹에 있는 값의 누적 분포를 계산
+    ▶ PERCENT_RANK()               : 그룹 수에 대한 값의 순위 퍼센트를 반환
+    ▶ NTITLE(n)                    : 출력결과를 지정한 그룹 수로 n으로 나누어 출력
+    ▶ ROW_NUMBER()                 : PARTITION BY 절의 정렬결과에 순위를 부여
+    ▶ FIRST_VALUE()                : ORDER BY절의 정렬된 그룹에서 첫번째 값을 반환
+    ▶ LAST_VALUE()                 : ORDER BY절의 정렬된 그룹에서 마지막 값을 반환
+    ▶ LAG(컬럼명, n)               : 칼럼의 현재 행 기준으로 n 이전 행 값을 반환
+    ▶ LEAD(칼럼명, n)              : 칼럼의 현재 행 기준으로 n 이후의 값을 반환
+    
+*/
+
+
+/*
+    ★ 분석함수 용도에 따른 분류
+    [집계분석]  : COUNT(), MAX(), MIN(), SUM(), AVG()
+    [순위계산]  : RANK(), DENSE_RANK(), ROW_NUMBER()
+    [순서분석]  : FIRST_VALUE(), LAST_VALUE(), LAG(), LEAD()
+    [통계분석]  :  STD_DEV(), VARIANCE()
+    [그룹비율]  : COME_DIST(), PERCENTER_RANK(), NTITLE()
+    
+*/
+
+
+
+
+ 
+
+
 
