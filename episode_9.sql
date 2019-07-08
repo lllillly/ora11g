@@ -196,9 +196,122 @@ SELECT
 */
 
 
+/*
+
+    집계함수와 분석함수의 문법
+    
+    ★ 집계함수 문법
+    ||  집계함수명(expr, ...) WITHIN GROUP (
+                    ORDER BY <값 표현> [ASC | DESC], ...
+                    [NULLS FIRST | NULLS LAST] [, ...] )
+                    
+    
+    ★ 분석함수 문법
+    ||  분석함수명() OVER ( <PARTITIOM BY 표현식1>
+                            <ORDER BY 표현식2 [ASC | DESC]>
+                            <window절> )
+                            
+                            
+                           
+*/
 
 
+--예제) 9.15 STUDENT 테이블을 이용하여, 학과별, 학년별 인원수를 계산하여 출력하시오.
+SELECT 
+        DEPT_ID,
+        YEAR,
+        COUNT(*) OVER(PARTITION BY DEPT_ID, YEAR) "인원수"
+  FROM  STUDENT
+ GROUP  BY  DEPT_ID, YEAR
+ ORDER  BY 1, 2;
+
+
+
+--예제) SG_SCores 테이블을 이용하여 과목별 성적취득 학생수와 과목별 평균점수를 계산하여 출력하시오.
+SELECT  * FROM SG_SCores;
+
+SELECT UNIQUE
+        COURSE_ID,
+        COUNT(*) OVER(PARTITION BY COURSE_ID) "학생 수",
+        AVG(SCORE) OVER(PARTITION BY COURSE_ID) "과목별 평균"
+  FROM  SG_SCORES
+ ORDER  BY  1;
+ 
+       
+        
+/*
+    순위를 위한 RANK() / DENSE_RANK()
+    
+    ★ 집계함수 문법
+    ||  집계함수명(expr, ...) WITHIN GROUP (
+                    ORDER BY <값 표현> [ASC | DESC], ...
+                    [NULLS FIRST | NULLS LAST] [, ...] )
+                    
+    
+    ★ 분석함수 문법
+    ||  분석함수명() OVER ( <PARTITIOM BY 표현식1>
+                            <ORDER BY 표현식2 [ASC | DESC]>
+                            <window절> )
+                            
+*/
+
+
+--예제 9.17) SG_SCORES 테이블에서 'C1701' 학번의 과목 성적에 대하여
+--          성적이 86점에 대한 석차와 성적 순위를 계산하시오
+SELECT
+        COURSE_ID,
+        STUDENT_ID,
+        SCORE,
+        RANK()       OVER(ORDER BY SCORE DESC) "석차",
+        DENSE_RANK() OVER(ORDER BY SCORE DESC) "석차",
+        ROW_NUMBER() OVER(ORDER BY SCORE DESC) "석차"
+  FROM  SG_SCORES
+ WHERE  STUDENT_ID = 'C1701';
+ 
+ 
+--예제9.19) SG_SCORES 테이블에서 학번별 총점을 이용하여 석차를 구하고,
+--          [학번, 총점, 평균, 석차]를 석차순으로 출력하시오.
+SELECT * FROM SG_SCORES;
+
+SELECT
+        STUDENT_ID,
+        SUM(SCORE) "총점",
+        FLOOR(AVG(SCORE)) "평균",
+        RANK() OVER(ORDER BY SUM(SCORE) DESC) "석차"
+  FROM  SG_SCORES
+ WHERE  SCORE IS NOT NULL
+ GROUP  BY STUDENT_ID
+ ORDER  BY 4;
+ 
+ 
+SELECT UNIQUE
+        STUDENT_ID,
+        COUNT(*) OVER(PARTITION BY STUDENT_ID) "과목 수"
+  FROM  SG_SCORES;
+  
+  
+
+--에졔9.21) SG_SCORES 테이블의 성적을 이용하여 전체석차와 과목별 석차를 과목코드별 석차순으로 출력하시오.
+SELECT * FROM SG_SCORES;
+
+SELECT
+        STUDENT_ID,
+        COURSE_ID,
+        SCORE,
+        RANK()      OVER(ORDER BY SCORE DESC) "전체석자",
+        RANK()      OVER(PARTITION BY COURSE_ID ORDER BY SCORE DESC)"과목별 석차"
+  FROM  SG_SCORES
+ WHERE  SCORE IS NOT NULL
+ ORDER  BY  2, 5;
+        
  
 
-
-
+--예제9.22) SG_SCORES 테이블에서 'C1601', 'C1602' 학번의 과목별 성적에 대한 누계점수를 계산하시오.
+SELECT
+        STUDENT_ID,
+        SCORE,
+        SUM(SCORE)      OVER(PARTITION BY STUDENT_ID ORDER BY COURSE_ID) "과목별 누계"
+  FROM  SG_SCORES
+ WHERE  STUDENT_ID IN ('C1601', 'C1602');
+ 
+ 
