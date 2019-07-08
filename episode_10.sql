@@ -9,6 +9,41 @@
 
 /*
     문법
+*****************************************************************************
+    SELECT
+            칼럼명1,
+            칼람명2,
+            칼럼명3,
+      FROM  테이블1, 테이블2
+     WHERE  조건식
+     GROUP  BY 칼럼명1, 칼럼명2, ...
+    HAVING  조건식
+     ORDER  BY 칼럼명1, 칼럼명2, ...
+*****************************************************************************
+     
+
     
+*/
+
+
+/*
+    카디션 프로덕트 또는 카티션 곱은 SELECT문의 WHERE절에 조인조건이 생략 또는 누락된 것으로
+    SELECT문의 FROM절에 기술한 테이블들의 행의 수를 곱한 행이 반환된다.
+*/
+
+--예제10.02) Professor 테이블과 Course테이블을 이용하여 교수가 담당하고있는 과목들을 찾아 출력하시오.
+--ANSI 표준문법 : 교차조인(CROSS JOIN)
+SELECT 
+        P.PROFESSOR_ID,
+        P.NAME,
+        P.POSITION,
+        C.TITLE,
+        C.C_NUMBER
+  FROM  PROFESSOR P  CROSS JOIN COURSE C
+ ORDER  BY  1;
+ 
+ 
+/*
+    ● 자연조인 (natural join)
     
 */
